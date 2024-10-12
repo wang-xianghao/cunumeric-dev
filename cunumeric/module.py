@@ -1230,6 +1230,44 @@ def reshape(
     """
     return a.reshape(newshape, order=order)
 
+def expand_dims(a: ndarray, axis: NdShapeLike):
+    """
+    Expand the shape of an array.
+
+    Insert a new axis that will appear at the `axis` position in the expanded
+    array shape.
+
+    Parameters
+    ----------
+    a : array_like
+        Input array.
+    axis : int or tuple of ints
+        Position in the expanded axes where the new axis (or axes) is placed.
+
+    Returns
+    -------
+    result : ndarray
+        View of `a` with the number of dimensions increased.
+
+    See Also
+    --------
+    numpy.reshape
+    
+    Availability
+    --------
+    Multiple GPUs, Multiple CPUs
+    """
+    
+    if type(axis) is not tuple:
+        axis = (axis, )
+        
+    out_ndim = len(axis) + a.ndim
+    axis = normalize_axis_tuple(axis, out_ndim)
+    
+    shape_it = iter(a.shape)
+    shape = [1 if ax in axis else next(shape_it) for ax in range(out_ndim)]
+    
+    return a.reshape(shape)
 
 # Transpose-like operations
 
